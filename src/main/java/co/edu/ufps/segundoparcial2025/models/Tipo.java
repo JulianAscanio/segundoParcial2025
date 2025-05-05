@@ -7,14 +7,14 @@ import java.util.List;
 
 @Data
 @Entity
-public class Pais {
+public class Tipo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nombre;
 
-    @OneToMany(mappedBy = "pais")
+    @OneToMany(mappedBy = "tipo")
     private List<Manga> mangas;
-}
 
+}
