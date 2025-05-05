@@ -20,7 +20,7 @@ public class MangaController {
     }
 
     @GetMapping("/{id}")
-    public Manga findById(@PathVariable Long id) {
+    public Manga findById(@PathVariable int id) {
         return mangaService.findById(id);
     }
 
@@ -30,7 +30,7 @@ public class MangaController {
     }
 
     @PutMapping("/{id}")
-    public Manga update(@PathVariable Long id, @RequestBody Manga manga) {
+    public Manga update(@PathVariable int id, @RequestBody Manga manga) {
         Manga existingManga = mangaService.findById(id);
         if (existingManga != null) {
             manga.setId(id);
@@ -40,7 +40,7 @@ public class MangaController {
     }
 
     @DeleteMapping("/{id}")
-    public Manga deleteById(@PathVariable Long id) {
+    public Manga deleteById(@PathVariable int id) {
         Manga manga = mangaService.findById(id);
         if (manga != null) {
             mangaService.deleteById(id);

@@ -2,6 +2,7 @@ package co.edu.ufps.segundoparcial2025.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,25 +15,14 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String username;
     private String nombre;
-
-    @Column(unique = true)
     private String email;
-
     private String password;
 
-    @ManyToMany
-    @JoinTable(
-            name = "favorito",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "manga_id")
-    )
-    private Set<Manga> favoritos;
-
     @JsonIgnore
-    @OneToMany(mappedBy = "usuario")
+    @ManyToMany(mappedBy = "usuarios")
     private List<Manga> mangas;
 }

@@ -17,7 +17,7 @@ public class MangaService {
         return mangaRepository.findAll();
     }
 
-    public Manga findById(Long id) {
+    public Manga findById(int id) {
         return mangaRepository.findById(id).orElse(null);
     }
 
@@ -25,16 +25,15 @@ public class MangaService {
         return mangaRepository.save(manga);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(int id) {
         mangaRepository.deleteById(id);
     }
 
-    public Manga getManga(Long id) {
+    public Manga getManga(int id) {
         try {
-            return mangaRepository.findById(id).get();
 
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
         return null;
     }

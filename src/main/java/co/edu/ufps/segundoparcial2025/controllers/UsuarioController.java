@@ -1,5 +1,6 @@
 package co.edu.ufps.segundoparcial2025.controllers;
 
+import co.edu.ufps.segundoparcial2025.models.Favorito;
 import co.edu.ufps.segundoparcial2025.models.Manga;
 import co.edu.ufps.segundoparcial2025.models.Usuario;
 import co.edu.ufps.segundoparcial2025.services.UsuarioService;
@@ -7,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -21,7 +24,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public Usuario findById(@PathVariable Long id) {
+    public Usuario findById(@PathVariable int id) {
         return usuarioService.findById(id);
     }
 
@@ -45,7 +48,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{username}/favoritos/{mangaId}")
-    public List<Manga> removeFavorito(@PathVariable String username, @PathVariable Long mangaId) {
+    public List<Manga> removeFavorito(@PathVariable String username, @PathVariable int mangaId) {
         Usuario usuario = usuarioService.findByUsername(username);
         Manga manga = usuario.getMangas().stream().filter(m -> m.getId() == mangaId).findFirst().orElse(null);
         if (manga != null) {

@@ -1,5 +1,6 @@
 package co.edu.ufps.segundoparcial2025.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,10 +12,7 @@ public class Tipo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private String nombre;
-
-    @OneToMany(mappedBy = "tipo")
-    private List<Manga> mangas;
 
 }
