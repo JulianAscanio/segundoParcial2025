@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -30,4 +31,8 @@ public class Usuario {
             inverseJoinColumns = @JoinColumn(name = "manga_id")
     )
     private Set<Manga> favoritos;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "usuario")
+    private List<Manga> mangas;
 }
