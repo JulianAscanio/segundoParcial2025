@@ -36,4 +36,8 @@ public class Manga {
     @ManyToMany(mappedBy = "favoritos")
     private Set<Usuario> usuariosQueLoFav;
 
+    @ManyToOne
+    @JoinColumn(name = "usuario_id") // FK en la tabla manga
+    private Usuario usuario;
+
 }
