@@ -6,10 +6,21 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class Favorito implements Serializable {
+@Entity
+public class Favorito {
 
-    private Usuario usuario_id;
-    private Manga manga_id;
+    @EmbeddedId
+    private FavoritoId id;
+
+    @ManyToOne
+    @MapsId("usuarioId")
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
+    @ManyToOne
+    @MapsId("mangaId")
+    @JoinColumn(name = "manga_id")
+    private Manga manga;
 
 }
 

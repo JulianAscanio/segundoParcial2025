@@ -2,12 +2,10 @@ package co.edu.ufps.segundoparcial2025.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Entity
@@ -23,6 +21,6 @@ public class Usuario {
     private String password;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "usuarios")
-    private List<Manga> mangas;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Favorito> favoritos;
 }

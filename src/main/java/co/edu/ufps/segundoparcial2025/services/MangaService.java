@@ -31,9 +31,9 @@ public class MangaService {
 
     public Manga getManga(int id) {
         try {
-
+            return mangaRepository.findById(id).orElse(null);
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return null;
     }

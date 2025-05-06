@@ -1,14 +1,17 @@
 package co.edu.ufps.segundoparcial2025.controllers;
 
 import co.edu.ufps.segundoparcial2025.models.Favorito;
+import co.edu.ufps.segundoparcial2025.models.FavoritoId;
 import co.edu.ufps.segundoparcial2025.models.Manga;
 import co.edu.ufps.segundoparcial2025.models.Usuario;
+import co.edu.ufps.segundoparcial2025.services.MangaService;
 import co.edu.ufps.segundoparcial2025.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -17,6 +20,10 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private MangaService mangaService;
+
 
     @GetMapping
     public List<Usuario> findAll() {
@@ -29,9 +36,15 @@ public class UsuarioController {
     }
 
     @GetMapping("/{username}/favoritos")
-    public List<Manga> getFavoritos(@PathVariable String username) {
+    public ResponseEntity<?> getFavoritos(@PathVariable String username) {
         Usuario usuario = usuarioService.findByUsername(username);
-        return usuario.getMangas();
+        if (usuario == null){
+            return ResponseEntity.status(404).body(Map.of("error", true,"msg", "Usuario no encontrado"));
+        }
+        List<Manga> favoritos = usuario.getFavoritos().stream()
+                .map(Favorito::getManga).collect(Collectors.toList());
+
+        return ResponseEntity.ok(favoritos);
     }
 
     @PostMapping
@@ -40,21 +53,56 @@ public class UsuarioController {
     }
 
     @PostMapping("/{username}/favoritos")
-    public List<Manga> addFavorito(@PathVariable String username, @RequestBody Manga manga) {
+    public ResponseEntity<?> addFavorito(@PathVariable String username, @RequestBody Manga mangaR) {
         Usuario usuario = usuarioService.findByUsername(username);
-        usuario.getMangas().add(manga);
+        if (usuario == null) {
+            return ResponseEntity.status(404).body(Map.of("error", true, "msg", "Usuario no encontrado"));
+        }
+
+        Manga manga = mangaService.findById(mangaR.getId());
+        if (manga == null){
+            return ResponseEntity.status(404).body(Map.of("error", true, "msg", "Manga no encontrado"));
+        }
+
+        boolean existeFav = usuario.getFavoritos().stream().
+                anyMatch(f -> f.getManga().getId().equals(manga.getId()));
+
+        if (existeFav){
+            return ResponseEntity.status(400)
+                    .body(Map.of("error", true, "msg", "Favorito ya se encuentra registrado"));
+        }
+
+        Favorito favorito = new Favorito();
+        favorito.setId(new FavoritoId(usuario.getId(), manga.getId()));
+        favorito.setUsuario(usuario);
+        favorito.setManga(manga);
+        usuario.getFavoritos().add(favorito);
+
         usuarioService.save(usuario);
-        return usuario.getMangas();
+
+        return  ResponseEntity.ok(favorito);
     }
 
+
     @DeleteMapping("/{username}/favoritos/{mangaId}")
-    public List<Manga> removeFavorito(@PathVariable String username, @PathVariable int mangaId) {
+    public ResponseEntity<?> removeFavorito(@PathVariable String username, @PathVariable int mangaId) {
         Usuario usuario = usuarioService.findByUsername(username);
-        Manga manga = usuario.getMangas().stream().filter(m -> m.getId() == mangaId).findFirst().orElse(null);
-        if (manga != null) {
-            usuario.getMangas().remove(manga);
-            usuarioService.save(usuario);
+        if (usuario == null) {
+            return ResponseEntity.status(404).body(Map.of("error", true, "msg", "Usuario no encontrado"));
         }
-        return usuario.getMangas();
+
+        Favorito favorito = usuario.getFavoritos().stream()
+                .filter(f -> f.getManga().getId() == mangaId)
+                .findFirst()
+                .orElse(null);
+
+        if (favorito == null) {
+            return ResponseEntity.status(404).body(Map.of("error", true, "msg", "Manga no está en favoritos"));
+        }
+
+        usuario.getFavoritos().remove(favorito);
+        usuarioService.save(usuario);
+
+        return ResponseEntity.ok(Map.of("msg", "Manga eliminado de favoritos"));
     }
 }
