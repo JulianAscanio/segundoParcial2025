@@ -14,7 +14,4 @@ public class Tipo {
     private Integer id;
     private String nombre;
 
-    @OneToMany(mappedBy = "tipo")
-    private List<Manga> mangas;
-
 }
